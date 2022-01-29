@@ -1,5 +1,4 @@
 task :sync_deputies => :environment do
-
   url = 'https://dadosabertos.camara.leg.br/api/v2'
 
   conn = Faraday.new(
@@ -17,6 +16,6 @@ task :sync_deputies => :environment do
       
     end
   else
-    puts 'Erro ao obter dados da camara'
+    puts 'Erro ao obter dados da Câmara dos Deputados.'
   end
 end
