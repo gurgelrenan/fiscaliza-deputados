@@ -66,6 +66,9 @@ GEM
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
       tzinfo (~> 2.0)
+    annotate (2.6.5)
+      activerecord (>= 2.3.0)
+      rake (>= 0.8.7)
     bindex (0.8.1)
     bootsnap (1.10.2)
       msgpack (~> 1.2)
@@ -77,6 +80,11 @@ GEM
     diff-lcs (1.4.4)
     digest (3.1.0)
     erubi (1.10.0)
+    factory_bot (4.11.1)
+      activesupport (>= 3.0.0)
+    factory_bot_rails (4.11.1)
+      factory_bot (~> 4.11.1)
+      railties (>= 3.0.0)
     faraday (1.8.0)
       faraday-em_http (~> 1.0)
       faraday-em_synchrony (~> 1.0)
@@ -226,7 +234,9 @@ PLATFORMS
   x86_64-darwin-20
 
 DEPENDENCIES
+  annotate
   bootsnap
+  factory_bot_rails
   faraday
   importmap-rails
   jbuilder
