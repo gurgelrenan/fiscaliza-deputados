@@ -1,6 +1,16 @@
 task :sync_expenses => :environment do
+  years = [2019, 2020, 2021, 2022]
+
+  years.each do |year|
+    populate_data(year)
+  end
+end
+
+def populate_data(year)
+  puts "Populating data for #{year}..."
+
   Deputy.all.each do |deputy|
-    first_url = "https://dadosabertos.camara.leg.br/api/v2/deputados/#{deputy.deputy_id}/despesas?idLegislatura=#{deputy.legislature_id}&ordem=DESC&ordenarPor=ano&itens=100"
+    first_url = "https://dadosabertos.camara.leg.br/api/v2/deputados/#{deputy.deputy_id}/despesas?idLegislatura=#{deputy.legislature_id}&ano=#{year}&ordem=asc&ordenarPor=mes&itens=100"
 
     response = Faraday.get(first_url)
     
@@ -35,6 +45,7 @@ task :sync_expenses => :environment do
     end    
   end
 end
+
 
 def save_expense(data, deputy)
   data['dados'].each do |row|

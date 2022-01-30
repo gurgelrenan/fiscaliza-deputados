@@ -54,6 +54,7 @@ group :development, :test do
   gem 'pry-byebug'
   gem 'rspec-rails', '~> 5.0.0'
   gem 'factory_bot_rails'
+  gem 'awesome_print'
 end
 
 group :development do
