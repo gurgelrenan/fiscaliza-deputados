@@ -10,5 +10,5 @@
 #
 
 class ExpenseType < ApplicationRecord
-  belongs_to :expense
+  has_many :expenses
 end
