@@ -1,0 +1,16 @@
+<table>
+  <tr>
+    <th>Foto</th>
+    <th>Nome</th>
+    <th>Despesas</th>
+    <th>Detalhes</th>
+  </tr>
+  <% @deputies.each do |deputy| %>
+    <tr>
+      <td><%= image_tag "#{deputy.photo_url}", size: '114x152' %></td>
+      <td><%= deputy.name %></td>
+      <td><%= number_to_currency(deputy.total_expenses, unit: "R$ ", separator: ",", delimiter: ".") %></td>
+      <td><%= link_to 'Gastos', deputy_path(deputy.id) %></td>
+    </tr>
+  <% end %>
+</table>

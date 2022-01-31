@@ -17,4 +17,14 @@
 
 class Deputy < ApplicationRecord
   has_many :expenses
+
+  def self.with_total_expenses
+    Deputy.joins(:expenses)
+          .select('deputies.*, sum(expenses.net_value) as total_expenses')
+          .group('deputies.id')
+  end
+
+  def max_expense
+    expenses.order(net_value: :desc).first
+  end
 end

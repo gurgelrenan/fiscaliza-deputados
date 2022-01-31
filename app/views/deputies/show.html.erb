@@ -1,0 +1,50 @@
+<fieldset>
+  <p>
+    <%= image_tag "#{@deputy.photo_url}", size: '114x152' %>
+  </p>
+  <p>
+    <strong>Nome:</strong>
+    <%= @deputy.name %>
+  </p>
+
+  <p>
+    <strong>Partido:</strong>
+    <%= @deputy.political_party %>
+  </p>
+
+  <p>
+    <strong>Página:</strong>
+    <%= link_to "Perfil", "http://www.camara.leg.br/Internet/deputado/Dep_Detalhe.asp?id=#{@deputy.deputy_id}" %>
+  </p>
+
+  <p>
+    <strong>Maior Despesa:</strong>
+    <%= number_to_currency(@max_expense.net_value, unit: "R$ ", separator: ",", delimiter: ".") %>
+    <%= link_to "Cupom", @max_expense.document_url %>
+  </p>
+</fieldset>
+
+<h2>Despesas</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Data</th>
+      <th>Estabelecimento</th>
+      <th>Valor</th>
+      <th>Nota</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @expenses.each do |expense| %>
+      <tr>
+        <td><%= expense.date.strftime("%d/%m/%Y") %></td>
+        <td><%= expense.provider.name %></td>
+        <td><%= number_to_currency(expense.net_value, unit: "R$ ", separator: ",", delimiter: ".") %></td>
+        <td><%= link_to "cupom", expense.document_url %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to 'Voltar', deputies_path %>

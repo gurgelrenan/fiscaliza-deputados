@@ -7,10 +7,24 @@
     <%= csp_meta_tag %>
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
     <%= javascript_importmap_tags %>
   </head>
 
   <body>
-    <%= yield %>
+    <header>
+      <h1><a href="/" style="text-decoration: none">Fiscaliza Deputados - Ceará</a></h1>
+      <p>Ficalize os gastos dos seus deputados.</p>
+    </header>
+
+    <main>
+      <%= yield %>
+    </main>
+
+    <footer>
+      <p>
+        Feito por <a href="https://github.com/gurgelrenan">@gurgelrenan</a>
+      </p>
+    </footer>
   </body>
 </html>
