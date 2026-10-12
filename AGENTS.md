@@ -1,39 +1,36 @@
 # Repository Guidelines
 
-## Project Structure & Module Organization
+## Project Structure
 
-This Rails 7 application displays Brazilian deputies and their parliamentary expenses using Câmara dos Deputados open data.
+This Rails 8.1 app displays Brazilian deputies and parliamentary expenses from Câmara dos Deputados open data.
 
-- `app/models/` contains `Deputy`, `Expense`, `ExpenseType`, and `Provider`; controllers and ERB views live in their standard `app/` directories.
-- `app/assets/` holds stylesheets; `app/javascript/` contains importmap-managed JavaScript and Stimulus controllers.
-- `config/` contains routes, environments, and database configuration.
-- `db/migrate/` holds migrations; `db/schema.rb` records the generated schema.
-- `lib/tasks/` contains deputy and expense synchronization tasks.
-- `spec/` contains model, request, and helper specs, FactoryBot factories, and shared support.
+- `app/models/` defines deputies, expenses, providers, and expense types; controllers and ERB views follow the standard Rails layout.
+- `app/assets/stylesheets/` contains CSS built with Propshaft. JavaScript uses Importmap, Turbo, and Stimulus under `app/javascript/`.
+- `config/` holds routes, database settings, and environment configuration; `db/migrate/` holds migrations and `db/schema.rb` the current schema.
+- `lib/tasks/` contains the external deputy and expense importers.
+- `spec/` contains RSpec model, request, and helper tests, factories, and task coverage.
 
-## Build, Test, and Development Commands
+## Setup and Development
 
-Use Ruby 3.0.0, Bundler, and a running PostgreSQL instance. Check local connection settings in `config/database.yml`.
+Use Ruby 4.0.7 (`.ruby-version`, `.tool-versions`), Bundler, and PostgreSQL. Install Ruby with `asdf install`; configure PostgreSQL in `config/database.yml` or with `DATABASE_URL`.
 
-- `bin/setup`: installs dependencies, prepares the database, clears logs and temporary files, and requests a server restart.
-- `bin/rails server`: starts the local application.
-- `bin/rails db:migrate`: applies migrations; commit the resulting schema changes.
-- `bundle exec rspec`: runs all specs; append `spec/models/deputy_spec.rb` for a focused run.
-- `bin/rails assets:precompile`: builds assets through Sprockets.
-- `bin/rake sync_deputies`, then `bin/rake sync_expenses`: imports external data into the selected database. Deputies are currently filtered to Ceará (`CE`); expenses cover hard-coded years 2019–2022. Review these filters before importing.
+- `bundle install`: install locked dependencies.
+- `bin/setup --skip-server`: prepare dependencies and databases, then clear temporary files.
+- `bin/dev`: run the local Rails server; open `http://localhost:3000`.
+- `bin/rails db:migrate`: apply migrations and update `db/schema.rb`.
+- `bin/rails zeitwerk:check`: verify Rails autoloading.
+- `RAILS_ENV=production SECRET_KEY_BASE_DUMMY=1 bin/rails assets:precompile`: check the production asset build.
 
-## Coding Style & Naming Conventions
+The importers access the Câmara API and write to the selected database: run `bin/rake sync_deputies` before `bin/rake sync_expenses`. Their current scope is Ceará (`CE`) and years 2019–2022; review `lib/tasks/` before changing or running imports against important data.
 
-Use two-space indentation, `snake_case` filenames and methods, and `CamelCase` classes. Follow Rails singular model and plural controller/table conventions. Match surrounding quote style; application Ruby generally uses single quotes for plain strings. Keep database queries in models and presentation in views/helpers. No formatter or linter is configured.
+## Style and Testing
 
-## Testing Guidelines
+Use two-space Ruby indentation, `snake_case` filenames and methods, and `CamelCase` classes. Follow Rails naming and nearby code conventions. RSpec and FactoryBot are the test stack; name examples `*_spec.rb` in the matching `spec/` subdirectory. Run `bundle exec rspec` (or pass a spec path). Stub HTTP requests with WebMock rather than contacting the Câmara API. Four legacy specs remain pending; no coverage threshold or formatter is configured.
 
-Use RSpec Rails and FactoryBot. Name tests `*_spec.rb` under the matching `spec/` directory. Existing specs include pending placeholders; add behavioral assertions for changed code, including expense calculations and request responses. Stub external HTTP calls in synchronization tests. No coverage threshold is configured.
+## Commits and Pull Requests
 
-## Commit & Pull Request Guidelines
+Keep commits focused and use a short descriptive subject. Repository hooks may add branch and `[MAIN]` prefixes. PRs should describe behavior and rationale, report verification results and pending specs, and call out migrations, deployment settings, or import-scope changes. Include screenshots for UI changes.
 
-Recent commits use `[MAIN]` followed by a short summary, for example `[MAIN] Add basic style and show page`. Follow that pattern and keep changes focused. PRs should explain the change, link relevant issues, report tests and remaining pending examples, and include screenshots for UI changes. Call out migrations or import-filter changes.
+## Security and Configuration
 
-## Security & Configuration
-
-Keep credentials and database passwords out of source control. Use Rails encrypted credentials or environment variables such as `FISCALIZA_DEPUTADOS_DATABASE_PASSWORD`; never commit `config/master.key`.
+Never commit secrets or `config/master.key`. Use encrypted Rails credentials or environment variables such as `DATABASE_URL`, `FISCALIZA_DEPUTADOS_DATABASE_PASSWORD`, `RAILS_MASTER_KEY`, and `REDIS_URL`. Production assumes HTTPS behind a TLS-terminating proxy.
