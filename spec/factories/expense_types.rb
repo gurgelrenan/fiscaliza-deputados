@@ -11,8 +11,6 @@
 
 FactoryBot.define do
   factory :expense_type do
-    expense_type_id { 1 }
-    description { "MyString" }
-    expense { nil }
+    description { 'COMBUSTÍVEIS E LUBRIFICANTES' }
   end
 end

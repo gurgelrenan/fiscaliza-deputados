@@ -10,10 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_30_154238) do
-
+ActiveRecord::Schema[8.1].define(version: 2022_01_30_154238) do
   # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
+  enable_extension "pg_catalog.plpgsql"
 
   create_table "deputies", force: :cascade do |t|
     t.string "name"
@@ -24,15 +23,15 @@ ActiveRecord::Schema.define(version: 2022_01_30_154238) do
     t.string "state", limit: 2
     t.string "political_party"
     t.string "photo_url"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "expense_types", force: :cascade do |t|
     t.integer "expense_type_id"
     t.string "description"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "expenses", force: :cascade do |t|
@@ -53,8 +52,8 @@ ActiveRecord::Schema.define(version: 2022_01_30_154238) do
     t.string "refund_number"
     t.integer "batch_code"
     t.integer "tranche"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["deputy_id"], name: "index_expenses_on_deputy_id"
     t.index ["expense_type_id"], name: "index_expenses_on_expense_type_id"
     t.index ["provider_id"], name: "index_expenses_on_provider_id"
@@ -63,8 +62,8 @@ ActiveRecord::Schema.define(version: 2022_01_30_154238) do
   create_table "providers", force: :cascade do |t|
     t.string "name"
     t.string "cpf_cnpj"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   add_foreign_key "expenses", "deputies"

@@ -32,6 +32,14 @@
 
 FactoryBot.define do
   factory :expense do
-    
+    deputy
+    provider
+    expense_type
+    year { 2022 }
+    month { 1 }
+    date { Date.new(2022, 1, 15) }
+    value { 125.50 }
+    net_value { 100.25 }
+    document_url { 'https://example.com/receipt.pdf' }
   end
 end
