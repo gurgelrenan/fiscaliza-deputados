@@ -1,33 +1,34 @@
 # Fiscaliza Deputados
 
-Aplicação Rails para consultar deputados do Ceará e suas despesas, importadas da API de Dados Abertos da Câmara dos Deputados.
+Aplicação Rails para consultar deputados do Ceará e despesas parlamentares importadas da API de Dados Abertos da Câmara dos Deputados.
 
-## Requisitos
+## Requisitos e execução local
 
-- Ruby **4.0.7** (fixado em `.ruby-version` e `.tool-versions`).
-- Rails **8.1.4**, com dependências fixadas em `Gemfile.lock`.
-- PostgreSQL em execução e um usuário com permissão para criar os bancos locais.
+- Ruby **4.0.7**, definido em `.ruby-version` e `.tool-versions`.
+- Rails **8.1.4** e dependências fixadas em `Gemfile.lock`.
+- PostgreSQL em execução. A configuração local padrão usa o socket e o usuário do sistema operacional.
 
-Com asdf: `asdf install`. Depois:
+Com asdf, instale a versão configurada e prepare o projeto:
 
 ```sh
+asdf install
 bundle install
 bin/setup --skip-server
 bin/dev
 ```
 
-Abra http://localhost:3000. `bin/setup` sem `--skip-server` também inicia o servidor. A configuração padrão usa PostgreSQL via socket local e o usuário do sistema; ajuste `config/database.yml` ou use `DATABASE_URL` para outra conexão. Não use `bin/setup --reset` em bancos com dados que precisam ser mantidos.
+Acesse http://localhost:3000. `bin/setup` também inicia o servidor se você omitir `--skip-server`. Para conectar com outro usuário ou host PostgreSQL, ajuste `config/database.yml` ou defina `DATABASE_URL`. A opção `bin/setup --reset` apaga e recria os bancos locais; use-a somente quando puder descartar os dados.
 
-## Importação
+## Importação de dados
 
 ```sh
 bin/rake sync_deputies
 bin/rake sync_expenses
 ```
 
-As tarefas escrevem no banco do ambiente selecionado e acessam a API externa. O comportamento original foi preservado: deputados filtrados por `CE` e despesas dos anos **2019–2022**. Revise `lib/tasks/` para alterar esse recorte; a atualização do framework não amplia a coleta automaticamente.
+Execute primeiro `sync_deputies`. Ambas as tarefas acessam a API externa e escrevem no banco do ambiente selecionado. O filtro atual busca deputados do Ceará (`CE`); as despesas abrangem os anos de 2019 a 2022. Confira `lib/tasks/` antes de mudar esses filtros ou importar para um banco com dados importantes.
 
-## Testes e verificação
+## Testes e verificações
 
 ```sh
 RAILS_ENV=test bin/rails db:prepare
@@ -36,12 +37,14 @@ bin/rails zeitwerk:check
 RAILS_ENV=production SECRET_KEY_BASE_DUMMY=1 bin/rails assets:precompile
 ```
 
-Para um teste específico: `bundle exec rspec spec/models/deputy_spec.rb`. RSpec usa FactoryBot e WebMock; os testes de importação não consultam a API real. Não aponte o ambiente de teste para um banco de produção. Alguns specs gerados originalmente continuam pendentes.
+Execute um spec específico passando seu caminho, por exemplo `bundle exec rspec spec/models/deputy_spec.rb`. Os testes de integração com a Câmara usam WebMock e não chamam a API real. Quatro specs antigos ainda estão pendentes.
 
-## Base atualizada
+## Framework e estrutura
 
-As configurações de aplicação, ambientes, Puma e scripts de desenvolvimento foram trazidas de uma aplicação nova Rails 8.1.4, com `config.load_defaults 8.1`. Models, migrations, rotas e páginas do projeto foram reaproveitados. Propshaft substitui Sprockets; JavaScript continua com Importmap, Turbo e Stimulus, sem etapa npm. O depurador agora é `debug`; a gem antiga `annotate` e seu hook automático foram removidos.
+O projeto usa Rails 8.1.4 com `config.load_defaults 8.1`. Propshaft compila os assets CSS; JavaScript usa Importmap, Turbo e Stimulus sem etapa npm. Os modelos, páginas, rotas e migrations históricas foram preservados. Estas migrations continuam usando `ActiveRecord::Migration[7.0]` para manter a semântica original.
 
-As migrations históricas continuam em `ActiveRecord::Migration[7.0]` para preservar sua semântica. Para um banco existente, faça backup e execute `bin/rails db:migrate`; não use `db:reset` nem `db:schema:load` sobre seus dados.
+Para atualizar um banco existente, faça backup e rode `bin/rails db:migrate`. Não use `db:reset` ou `db:schema:load` em um banco cujos dados queira manter. O endpoint `/up` fornece uma verificação de saúde da aplicação.
 
-Em produção, configure `DATABASE_URL` ou `FISCALIZA_DEPUTADOS_DATABASE_PASSWORD` e forneça `SECRET_KEY_BASE` ou a chave das credenciais existentes via `RAILS_MASTER_KEY`. As credenciais criptografadas originais foram preservadas. A configuração nova exige HTTPS e pressupõe um proxy que termina TLS. O endpoint `/up` verifica a inicialização da aplicação. Action Cable mantém o adaptador Redis (`REDIS_URL`); jobs e cache usam os adaptadores em memória padrão.
+## Produção e configuração
+
+Configure `DATABASE_URL` ou `FISCALIZA_DEPUTADOS_DATABASE_PASSWORD` e `SECRET_KEY_BASE`. Se os segredos estiverem nas credenciais Rails existentes, forneça a chave por `RAILS_MASTER_KEY`; não versione `config/master.key`. A configuração de produção força HTTPS e pressupõe um proxy que termina TLS. Action Cable usa Redis via `REDIS_URL` (o padrão aponta para `localhost:6379`); configure um Redis acessível no ambiente de produção. Jobs e cache usam os adaptadores em memória padrão.
