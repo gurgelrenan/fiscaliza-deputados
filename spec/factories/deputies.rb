@@ -17,6 +17,11 @@
 
 FactoryBot.define do
   factory :deputy do
-    
+    sequence(:name) { |n| "Deputado #{n}" }
+    sequence(:deputy_id) { |n| n }
+    legislature_id { 57 }
+    state { 'CE' }
+    political_party { 'TEST' }
+    photo_url { 'https://example.com/deputy.jpg' }
   end
 end
