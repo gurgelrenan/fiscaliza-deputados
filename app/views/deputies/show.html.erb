@@ -19,8 +19,12 @@
 
   <p>
     <strong>Maior Despesa:</strong>
-    <%= number_to_currency(@max_expense.net_value, unit: "R$ ", separator: ",", delimiter: ".") %>
-    <%= link_to "Cupom", @max_expense.document_url %>
+    <% if @max_expense %>
+      <%= number_to_currency(@max_expense.net_value, unit: "R$ ", separator: ",", delimiter: ".") %>
+      <%= link_to "Cupom", @max_expense.document_url %>
+    <% else %>
+      Nenhuma despesa cadastrada.
+    <% end %>
   </p>
 </fieldset>
 

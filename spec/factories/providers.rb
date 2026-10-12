@@ -11,7 +11,7 @@
 
 FactoryBot.define do
   factory :provider do
-    name { "MyString" }
-    cpf_cnpj { "MyString" }
+    name { 'Fornecedor de teste' }
+    sequence(:cpf_cnpj) { |n| n.to_s.rjust(14, '0') }
   end
 end
