@@ -2,15 +2,6 @@ class DeputiesController < ApplicationController
   def index
     @deputies = Deputy.with_total_expenses
                       .order(:name)
-    @total_expenses = Expense.sum(:net_value)
-    @expense_count = Expense.count
-    @yearly_expenses = Expense.where.not(year: nil).group(:year).sum(:net_value).sort.to_h
-    @type_expenses = Expense.joins(:expense_type)
-                            .group("expense_types.description")
-                            .sum(:net_value)
-                            .sort_by { |_description, amount| -amount }
-                            .first(6)
-    @top_spenders = @deputies.sort_by { |deputy| -deputy.total_expenses.to_f }.first(5)
   end
 
   def show
