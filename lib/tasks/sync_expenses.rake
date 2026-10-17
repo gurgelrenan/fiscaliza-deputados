@@ -1,5 +1,5 @@
 task :sync_expenses => :environment do
-  years = [2019, 2020, 2021, 2022]
+  years = [2023, 2024, 2025, 2026]
 
   years.each do |year|
     populate_data(year)
