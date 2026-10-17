@@ -35,24 +35,25 @@ RSpec.describe 'Synchronization tasks' do
     row = {
       nomeFornecedor: 'Posto de teste', cnpjCpfFornecedor: '12345678000100',
       tipoDespesa: 'COMBUSTÍVEIS', mes: 1, codDocumento: 100,
-      dataDocumento: '2022-01-15', valorDocumento: 30, valorLiquido: 25.75,
+      dataDocumento: '2026-01-15', valorDocumento: 30, valorLiquido: 25.75,
       urlDocumento: 'https://example.com/receipt.pdf'
     }
     base = "https://dadosabertos.camara.leg.br/api/v2/deputados/#{deputy.deputy_id}/despesas"
-    (2019..2022).each do |year|
-      links = year == 2022 ? [{ rel: 'next', href: "#{base}?pagina=2" }] : []
+    (2023..2026).each do |year|
+      links = year == 2026 ? [{ rel: 'next', href: "#{base}?pagina=2" }] : []
       stub_request(:get, base).with(query: {
         idLegislatura: deputy.legislature_id.to_s, ano: year.to_s,
         ordem: 'asc', ordenarPor: 'mes', itens: '100'
-      }).to_return(status: 200, body: { dados: [row.merge(ano: year)], links: links }.to_json)
+      }).to_return(status: 200, body: { dados: [row.merge(ano: year, dataDocumento: "#{year}-01-15")], links: links }.to_json)
     end
     next_page = stub_request(:get, "#{base}?pagina=2").to_return(
-      status: 200, body: { dados: [row.merge(ano: 2022, codDocumento: 101)], links: [] }.to_json
+      status: 200, body: { dados: [row.merge(ano: 2026, codDocumento: 101)], links: [] }.to_json
     )
 
     expect { run_task('sync_expenses') }.to change(Expense, :count).by(5)
     expect { run_task('sync_expenses') }.not_to change(Expense, :count)
     expect(deputy.expenses.sum(:net_value)).to eq(BigDecimal('128.75'))
+    expect(deputy.expenses.distinct.pluck(:year)).to match_array([2023, 2024, 2025, 2026])
     expect(Provider.count).to eq(1)
     expect(ExpenseType.count).to eq(1)
     expect(next_page).to have_been_requested.twice
