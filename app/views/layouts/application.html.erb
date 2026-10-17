@@ -1,30 +1,39 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>FiscalizaDeputados</title>
+    <title><%= content_for?(:title) ? yield(:title) : "Fiscaliza Deputados — Ceará" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="#193d35">
+    <meta name="description" content="Consulte despesas parlamentares e acesse os comprovantes disponíveis.">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
     <%= javascript_importmap_tags %>
   </head>
 
   <body>
-    <header>
-      <h1><a href="/" style="text-decoration: none">Fiscaliza Deputados - Ceará</a></h1>
-      <p>Ficalize os gastos dos seus deputados.</p>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <%= link_to root_path, class: "brand", aria: { label: "Fiscaliza Deputados — início" } do %>
+          <span class="brand__name">Fiscaliza Deputados</span>
+          <span class="brand__region">Ceará</span>
+        <% end %>
+        <nav class="site-nav" aria-label="Navegação principal">
+          <%= link_to "Deputados", deputies_path, class: (current_page?(root_path) || current_page?(deputies_path) ? "is-current" : nil) %>
+        </nav>
+      </div>
     </header>
 
-    <main>
+    <main class="page-shell">
       <%= yield %>
     </main>
 
-    <footer>
-      <p>
-        Feito por <a href="https://github.com/gurgelrenan">@gurgelrenan</a>
-      </p>
+    <footer class="site-footer">
+      <div class="site-footer__inner">
+        <p>Despesas parlamentares do Ceará</p>
+        <p>Dados abertos da <a href="https://dadosabertos.camara.leg.br/" target="_blank" rel="noopener">Câmara dos Deputados</a></p>
+      </div>
     </footer>
   </body>
 </html>
