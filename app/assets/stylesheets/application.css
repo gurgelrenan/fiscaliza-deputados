@@ -188,3 +188,55 @@ h1, h2, h3 { color: var(--ink); font-family: var(--display); font-weight: 600; l
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
 }
+
+/* Home: a clear invitation followed by a scan-friendly public record. */
+.home-intro { display: grid; grid-template-columns: minmax(0, 1.8fr) minmax(0, 1fr); gap: 64px; align-items: center; padding-bottom: 48px; }
+.home-intro h1 { max-width: 21ch; margin-bottom: 22px; color: var(--green); font-size: clamp(2.3rem, 3.7vw, 3.5rem); line-height: 1.12; text-wrap: balance; }
+.home-intro h1 span { color: var(--red); }
+.home-intro__message > p { max-width: 55ch; margin-bottom: 24px; color: var(--ink-soft); font-size: 17px; }
+.home-intro__action { display: inline-flex; min-height: 48px; gap: 24px; align-items: center; padding: 12px 20px; color: var(--paper-light); background: var(--green); font-weight: 700; text-decoration: none; }
+.home-intro__action:hover { color: var(--paper-light); background: var(--green-hover); }
+.home-guide { padding: 30px; background: var(--paper-light); border-top: 2px solid var(--green); }
+.home-guide h2 { max-width: 15ch; margin-bottom: 16px; color: var(--green); font-size: 27px; line-height: 1.2; }
+.home-guide p { margin-bottom: 24px; color: var(--ink-soft); font-size: 15px; }
+.home-guide a { font-size: 13px; font-weight: 600; }
+.home-list-heading { display: flex; gap: 24px; align-items: center; justify-content: space-between; padding-top: 28px; border-top: 1px solid var(--line-strong); scroll-margin-top: 24px; }
+.home-list-heading h2 { margin-bottom: 6px; font-size: 27px; }
+.home-list-heading > div > p { margin-bottom: 0; color: var(--ink-soft); font-size: 14px; }
+.deputies-page .deputy-table-wrap { margin-top: 24px; }
+.deputies-page .deputy-table th { padding-bottom: 14px; font-size: 11px; }
+.deputies-page .deputy-table td { padding-block: 18px; background: var(--paper-light); }
+.deputies-page .deputy-table tbody tr:hover td { background: var(--paper); }
+.deputies-page .deputy-table__person { display: table-cell; }
+.deputy-identity { display: flex; gap: 18px; align-items: center; }
+.deputies-page .deputy-name { color: var(--green); font-size: 17px; text-decoration: none; }
+.deputies-page .deputy-name:hover { text-decoration: underline; }
+.deputy-party { display: inline-block; padding: 3px 9px; border: 1px solid var(--line); color: var(--ink-soft); font-size: 12px; font-weight: 600; }
+.deputies-page .deputy-table__amount { font-size: 18px; letter-spacing: -0.02em; }
+.deputies-page .deputy-table__amount::after { content: none; }
+.deputies-page .deputy-table__action .text-link { display: inline-flex; min-height: 44px; align-items: center; padding: 8px 14px; border: 1px solid var(--line-strong); text-decoration: none; }
+.deputies-page .deputy-table__action .text-link:hover { border-color: var(--green); color: var(--paper-light); background: var(--green); }
+.deputy-photo--placeholder { display: grid; place-items: center; color: var(--green); font-family: var(--display); font-size: 26px; }
+
+@media (max-width: 900px) {
+  .home-intro { gap: 30px; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); }
+  .home-guide { padding: 22px; }
+}
+@media (max-width: 760px) {
+  .home-intro { grid-template-columns: 1fr; gap: 28px; padding-bottom: 32px; }
+  .home-intro h1 { font-size: clamp(2rem, 7.8vw, 3rem); }
+  .home-intro__message > p { font-size: 16px; }
+  .home-guide h2 { max-width: none; font-size: 23px; }
+  .home-guide p { margin-bottom: 12px; }
+  .home-list-heading { flex-wrap: wrap; gap: 12px; }
+  .home-list-heading h2 { font-size: 24px; }
+  .home-list-heading .page-intro__count { margin: 0; }
+  .deputies-page .deputy-table tbody tr { padding: 18px; background: var(--paper-light); grid-template-columns: minmax(0, 1fr) auto; }
+  .deputies-page .deputy-table td { padding-block: 6px; background: none; }
+  .deputies-page .deputy-table__person { display: block; }
+  .deputies-page .deputy-name { font-size: 16px; overflow-wrap: anywhere; }
+  .deputy-identity { gap: 13px; }
+  .deputies-page .deputy-table__party { padding-left: 0 !important; align-self: center; }
+  .deputies-page .deputy-table__amount { font-size: 16px; align-self: center; }
+  .deputies-page .deputy-table__action { padding-left: 0 !important; margin-top: 8px; }
+}

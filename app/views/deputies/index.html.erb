@@ -1,12 +1,25 @@
 <% content_for :title, "Despesas parlamentares do Ceará — Fiscaliza Deputados" %>
 
 <section class="deputies-page" aria-labelledby="page-title">
-  <div class="page-intro">
-    <div>
-      <h1 id="page-title">Despesas dos deputados</h1>
-      <p>Consulte os registros parlamentares e abra os comprovantes disponíveis.</p>
+  <div class="home-intro">
+    <div class="home-intro__message">
+      <h1 id="page-title">O dinheiro é público.<br><span>Acompanhar é seu direito.</span></h1>
+      <p>Conheça as despesas dos deputados federais do Ceará. Consulte os valores registrados e veja os comprovantes disponíveis.</p>
+      <a href="#parlamentares" class="home-intro__action">Explorar despesas <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 4v16m-6-6 6 6 6-6"/></svg></a>
     </div>
-    <p class="page-intro__count"><strong><%= @deputies.length %></strong> parlamentares</p>
+    <aside class="home-guide" aria-labelledby="guide-title">
+      <h2 id="guide-title">Do total ao comprovante.</h2>
+      <p>Escolha um parlamentar para consultar as despesas por mês, os fornecedores e os documentos disponíveis.</p>
+      <a href="https://dadosabertos.camara.leg.br/" target="_blank" rel="noopener">Fonte: Câmara dos Deputados</a>
+    </aside>
+  </div>
+
+  <div class="home-list-heading" id="parlamentares">
+    <div>
+      <h2>Despesas dos deputados</h2>
+      <p>Valores registrados na base. Selecione um nome para explorar.</p>
+    </div>
+    <p class="page-intro__count"><strong><%= @deputies.length %></strong> <%= @deputies.length == 1 ? "parlamentar" : "parlamentares" %></p>
   </div>
 
   <% if @deputies.any? %>
@@ -24,12 +37,18 @@
           <% @deputies.each do |deputy| %>
             <tr>
               <td class="deputy-table__person" data-label="Parlamentar">
-                <%= image_tag deputy.photo_url, class: "deputy-photo", alt: "Retrato de #{deputy.name}", loading: "lazy" %>
-                <span class="deputy-name"><%= deputy.name %></span>
+                <div class="deputy-identity">
+                  <% if deputy.photo_url.present? %>
+                    <%= image_tag deputy.photo_url, class: "deputy-photo", alt: "Retrato de #{deputy.name}", loading: "lazy", width: 54, height: 68 %>
+                  <% else %>
+                    <span class="deputy-photo deputy-photo--placeholder" aria-hidden="true"><%= deputy.name.to_s.first %></span>
+                  <% end %>
+                  <%= link_to deputy.name, deputy_path(deputy), class: "deputy-name" %>
+                </div>
               </td>
-              <td class="deputy-table__party" data-label="Partido"><%= deputy.political_party.presence || "Não informado" %></td>
+              <td class="deputy-table__party" data-label="Partido"><span class="deputy-party"><%= deputy.political_party.presence || "Não informado" %></span></td>
               <td class="deputy-table__amount" data-label="Total registrado"><%= number_to_currency(deputy.total_expenses, unit: "R$ ", separator: ",", delimiter: ".") %></td>
-              <td class="deputy-table__action" data-label="Detalhes"><%= link_to "Ver despesas", deputy_path(deputy), class: "text-link" %></td>
+              <td class="deputy-table__action" data-label="Detalhes"><%= link_to "Ver despesas", deputy_path(deputy), class: "text-link", aria: { label: "Ver despesas de #{deputy.name}" } %></td>
             </tr>
           <% end %>
         </tbody>
