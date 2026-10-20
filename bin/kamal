@@ -12,5 +12,8 @@ ENV["BUNDLE_GEMFILE"] ||= File.expand_path("../Gemfile", __dir__)
 
 require "rubygems"
 require "bundler/setup"
+require "dotenv"
+
+Dotenv.load(File.expand_path("../.env", __dir__))
 
 load Gem.bin_path("kamal", "kamal")
