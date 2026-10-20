@@ -1,6 +1,55 @@
 require 'rails_helper'
 
 RSpec.describe 'Deputies', type: :request do
+  describe 'search' do
+    let!(:jose) { create(:deputy, name: 'José Guimarães', political_party: 'PT') }
+    let!(:ana) { create(:deputy, name: 'Ana Silva', political_party: 'PDT') }
+
+    before do
+      create(:expense, deputy: jose, net_value: 100)
+      create(:expense, deputy: jose, net_value: 50)
+      create(:expense, deputy: ana, net_value: 25)
+    end
+
+    it 'matches partial names without accents or case and preserves expense totals' do
+      get deputies_path, params: { q: '  JOSE GUI  ' }
+
+      document = Nokogiri::HTML(response.body)
+      expect(document.css('.deputy-name').map(&:text)).to eq(['José Guimarães'])
+      expect(document.at_css('input[name="q"]')['value']).to eq('JOSE GUI')
+      expect(response.body).to include("R$\u00a0150,00", '1 resultado')
+    end
+
+    it 'matches party acronyms' do
+      get deputies_path, params: { q: 'pdt' }
+      expect(Nokogiri::HTML(response.body).css('.deputy-name').map(&:text)).to eq(['Ana Silva'])
+    end
+
+    it 'treats wildcard and SQL characters as literal search text' do
+      ["%", "_", "' OR 1=1 --"].each do |query|
+        get deputies_path, params: { q: query }
+        expect(response).to have_http_status(:ok)
+        expect(Nokogiri::HTML(response.body).css('.deputy-name')).to be_empty
+        expect(response.body).to include('Nenhum deputado encontrado', 'Limpar busca')
+      end
+    end
+
+    it 'restores the complete list for blank or malformed search parameters' do
+      ['   ', ['José']].each do |query|
+        get deputies_path, params: { q: query }
+        expect(Nokogiri::HTML(response.body).css('.deputy-name').size).to eq(2)
+      end
+    end
+
+    it 'escapes search text and exposes counts without putting the query in analytics context' do
+      get deputies_path, params: { q: '<script>alert(1)</script>' }
+      document = Nokogiri::HTML(response.body)
+      expect(response.body).not_to include('<script>alert(1)</script>')
+      context = JSON.parse(document.at_css('[data-analytics-page]')['data-analytics-properties'])
+      expect(context).to eq('search_active' => true, 'result_count' => 0)
+    end
+  end
+
   it 'renders an empty home page' do
     get root_path
     expect(response).to have_http_status(:ok)

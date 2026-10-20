@@ -18,6 +18,16 @@
 class Deputy < ApplicationRecord
   has_many :expenses
 
+  def self.search(query)
+    return all if query.blank?
+
+    pattern = "%#{sanitize_sql_like(I18n.transliterate(query).downcase)}%"
+    where(<<~SQL.squish, pattern)
+      translate(lower(concat_ws(' ', deputies.name, deputies.political_party)),
+                'áàâãäåéèêëíìîïóòôõöúùûüçñ', 'aaaaaaeeeeiiiiooooouuuucn') LIKE ?
+    SQL
+  end
+
   def self.with_total_expenses
     Deputy.joins(:expenses)
           .select('deputies.*, sum(expenses.net_value) as total_expenses')

@@ -1,6 +1,7 @@
 <% content_for :title, "Despesas de #{@deputy.name} — Fiscaliza Deputados" %>
 
-<section class="deputy-profile" aria-labelledby="page-title">
+<section class="deputy-profile" aria-labelledby="page-title" data-analytics-page="deputy_expenses"
+         data-analytics-properties="<%= deputy_analytics_properties(@deputy).merge(month: @selected_month, expense_type_id: @selected_expense_type_id).to_json %>">
   <%= link_to "← Todos os deputados", deputies_path, class: "back-link" %>
 
   <div class="profile-header">
@@ -15,7 +16,7 @@
       <% if @max_expense %>
         <p class="profile-highlight__value"><%= number_to_currency(@max_expense.net_value, unit: "R$ ", separator: ",", delimiter: ".") %></p>
         <% if @max_expense.document_url.present? %>
-          <%= link_to "Abrir comprovante ↗", @max_expense.document_url, class: "text-link", target: "_blank", rel: "noopener" %>
+          <%= link_to "Abrir comprovante ↗", @max_expense.document_url, class: "text-link", target: "_blank", rel: "noopener", data: analytics_feature("open_receipt", expense_id: @max_expense.id, source: "largest_expense") %>
         <% else %>
           <span class="muted-note">Comprovante indisponível</span>
         <% end %>
@@ -33,7 +34,7 @@
     <span class="record-count"><%= @expenses.size %> <%= @expenses.size == 1 ? "registro" : "registros" %></span>
   </div>
 
-  <%= form_with url: deputy_path(@deputy), method: :get, class: "expense-filter" do |form| %>
+  <%= form_with url: deputy_path(@deputy), method: :get, class: "expense-filter", data: analytics_feature("filter_expenses") do |form| %>
     <div class="expense-filter__field">
       <%= form.label :expense_type_id, "Tipo de despesa" %>
       <%= form.collection_select :expense_type_id, @expense_types, :id, :description,
@@ -42,7 +43,7 @@
     </div>
     <%= form.submit "Filtrar", class: "expense-filter__submit" %>
     <% if @selected_expense_type_id || @selected_month %>
-      <%= link_to "Limpar filtros", deputy_path(@deputy), class: "expense-filter__clear" %>
+      <%= link_to "Limpar filtros", deputy_path(@deputy), class: "expense-filter__clear", data: analytics_feature("clear_filters") %>
     <% end %>
   <% end %>
 
@@ -55,7 +56,7 @@
             <tr>
               <td>
                 <% if year && month&.between?(1, 12) %>
-                  <%= link_to expense_month_label(year, month), deputy_path(@deputy, request.query_parameters.merge(month: "#{year}-#{month.to_s.rjust(2, '0')}")), class: "month-table__link" %>
+                  <%= link_to expense_month_label(year, month), deputy_path(@deputy, request.query_parameters.merge(month: "#{year}-#{month.to_s.rjust(2, '0')}")), class: "month-table__link", data: analytics_feature("view_month", month: "#{year}-#{month.to_s.rjust(2, '0')}") %>
                 <% else %>
                   <span class="muted-note"><%= expense_month_label(year, month) %></span>
                 <% end %>
@@ -68,16 +69,16 @@
       </table>
     </div>
   <% elsif @expenses.any? %>
-    <%= link_to "← Todos os meses", deputy_path(@deputy, request.query_parameters.except("month", "sort", "direction")), class: "back-link month-back-link" %>
+    <%= link_to "← Todos os meses", deputy_path(@deputy, request.query_parameters.except("month", "sort", "direction")), class: "back-link month-back-link", data: analytics_feature("view_all_months") %>
     <div class="expense-table-wrap">
       <table class="expense-table">
         <thead>
           <tr>
-            <th scope="col" aria-sort="<%= @sort == "date" ? (@direction == "asc" ? "ascending" : "descending") : "none" %>"><%= link_to "Data#{@sort == "date" ? (@direction == "asc" ? " ↑" : " ↓") : ""}", deputy_path(@deputy, request.query_parameters.merge(sort: "date", direction: @sort == "date" && @direction == "asc" ? "desc" : "asc")), class: "expense-sort-link" %></th>
-            <th scope="col" aria-sort="<%= @sort == "provider" ? (@direction == "asc" ? "ascending" : "descending") : "none" %>"><%= link_to "Estabelecimento#{@sort == "provider" ? (@direction == "asc" ? " ↑" : " ↓") : ""}", deputy_path(@deputy, request.query_parameters.merge(sort: "provider", direction: @sort == "provider" && @direction == "asc" ? "desc" : "asc")), class: "expense-sort-link" %></th>
+            <th scope="col" aria-sort="<%= @sort == "date" ? (@direction == "asc" ? "ascending" : "descending") : "none" %>"><%= link_to "Data#{@sort == "date" ? (@direction == "asc" ? " ↑" : " ↓") : ""}", deputy_path(@deputy, request.query_parameters.merge(sort: "date", direction: @sort == "date" && @direction == "asc" ? "desc" : "asc")), class: "expense-sort-link", data: analytics_feature("sort_expenses", sort: "date") %></th>
+            <th scope="col" aria-sort="<%= @sort == "provider" ? (@direction == "asc" ? "ascending" : "descending") : "none" %>"><%= link_to "Estabelecimento#{@sort == "provider" ? (@direction == "asc" ? " ↑" : " ↓") : ""}", deputy_path(@deputy, request.query_parameters.merge(sort: "provider", direction: @sort == "provider" && @direction == "asc" ? "desc" : "asc")), class: "expense-sort-link", data: analytics_feature("sort_expenses", sort: "provider") %></th>
             <th scope="col">CNPJ</th>
-            <th scope="col" aria-sort="<%= @sort == "expense_type" ? (@direction == "asc" ? "ascending" : "descending") : "none" %>"><%= link_to "Tipo de despesa#{@sort == "expense_type" ? (@direction == "asc" ? " ↑" : " ↓") : ""}", deputy_path(@deputy, request.query_parameters.merge(sort: "expense_type", direction: @sort == "expense_type" && @direction == "asc" ? "desc" : "asc")), class: "expense-sort-link" %></th>
-            <th scope="col" class="expense-table__amount-heading" aria-sort="<%= @sort == "net_value" ? (@direction == "asc" ? "ascending" : "descending") : "none" %>"><%= link_to "Valor líquido#{@sort == "net_value" ? (@direction == "asc" ? " ↑" : " ↓") : ""}", deputy_path(@deputy, request.query_parameters.merge(sort: "net_value", direction: @sort == "net_value" && @direction == "desc" ? "asc" : "desc")), class: "expense-sort-link" %></th>
+            <th scope="col" aria-sort="<%= @sort == "expense_type" ? (@direction == "asc" ? "ascending" : "descending") : "none" %>"><%= link_to "Tipo de despesa#{@sort == "expense_type" ? (@direction == "asc" ? " ↑" : " ↓") : ""}", deputy_path(@deputy, request.query_parameters.merge(sort: "expense_type", direction: @sort == "expense_type" && @direction == "asc" ? "desc" : "asc")), class: "expense-sort-link", data: analytics_feature("sort_expenses", sort: "expense_type") %></th>
+            <th scope="col" class="expense-table__amount-heading" aria-sort="<%= @sort == "net_value" ? (@direction == "asc" ? "ascending" : "descending") : "none" %>"><%= link_to "Valor líquido#{@sort == "net_value" ? (@direction == "asc" ? " ↑" : " ↓") : ""}", deputy_path(@deputy, request.query_parameters.merge(sort: "net_value", direction: @sort == "net_value" && @direction == "desc" ? "asc" : "desc")), class: "expense-sort-link", data: analytics_feature("sort_expenses", sort: "net_value") %></th>
             <th scope="col" class="expense-table__document-heading">Comprovante</th>
           </tr>
         </thead>
@@ -91,7 +92,7 @@
               <td class="expense-table__amount" data-label="Valor líquido"><%= number_to_currency(expense.net_value, unit: "R$ ", separator: ",", delimiter: ".") %></td>
               <td class="expense-table__document" data-label="Comprovante">
                 <% if expense.document_url.present? %>
-                  <%= link_to "Abrir comprovante ↗", expense.document_url, class: "text-link", target: "_blank", rel: "noopener" %>
+                  <%= link_to "Abrir comprovante ↗", expense.document_url, class: "text-link", target: "_blank", rel: "noopener", data: analytics_feature("open_receipt", expense_id: expense.id, source: "expense_table") %>
                 <% else %>
                   <span class="muted-note">Indisponível</span>
                 <% end %>

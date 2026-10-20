@@ -28,7 +28,10 @@ env:
   clear:
     DATABASE_HOST: fiscaliza-deputados-db
     REDIS_URL: redis://fiscaliza-deputados-redis:6379/1
+    POSTHOG_API_HOST: <%= ENV.fetch("POSTHOG_API_HOST", "https://us.i.posthog.com").to_json %>
+    POSTHOG_ENABLED: <%= ENV.fetch("POSTHOG_ENABLED", "true").to_json %>
   secret:
+    - POSTHOG_PROJECT_KEY
     - RAILS_MASTER_KEY
     - FISCALIZA_DEPUTADOS_DATABASE_PASSWORD
 

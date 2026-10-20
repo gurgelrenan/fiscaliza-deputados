@@ -19,6 +19,12 @@ bin/dev
 
 Acesse http://localhost:3000. `bin/setup` também inicia o servidor se você omitir `--skip-server`. Para conectar com outro usuário ou host PostgreSQL, ajuste `config/database.yml` ou defina `DATABASE_URL`. A opção `bin/setup --reset` apaga e recria os bancos locais; use-a somente quando puder descartar os dados.
 
+## Analytics de uso
+
+A integração com PostHog mede consultas por deputado, uso de filtros, o caminho da lista até as despesas e retorno dos visitantes.
+Configure `POSTHOG_PROJECT_KEY` e `POSTHOG_API_HOST` para ativar em produção. Desenvolvimento exige também `POSTHOG_ENABLED=true`.
+Veja [configuração, eventos e os quatro relatórios](docs/posthog.md). A lista permite buscar por nome ou partido, sem diferenciar maiúsculas e acentos. O texto pesquisado não é enviado ao PostHog.
+
 ## Importação de dados
 
 ```sh

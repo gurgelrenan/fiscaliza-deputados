@@ -1,6 +1,7 @@
 <% content_for :title, "Despesas parlamentares do Ceará — Fiscaliza Deputados" %>
 
-<section class="deputies-page" aria-labelledby="page-title">
+<section class="deputies-page" aria-labelledby="page-title" data-analytics-page="deputies_list"
+         data-analytics-properties="<%= { search_active: @query.present?, result_count: @deputies.length }.to_json %>">
   <div class="home-intro">
     <div class="home-intro__message">
       <h1 id="page-title">O dinheiro é público.<br><span>Acompanhar é seu direito.</span></h1>
@@ -21,6 +22,21 @@
     </div>
     <p class="page-intro__count"><strong><%= @deputies.length %></strong> <%= @deputies.length == 1 ? "parlamentar" : "parlamentares" %></p>
   </div>
+
+  <%= form_with url: deputies_path(anchor: "parlamentares"), method: :get, role: "search", class: "deputy-search", data: analytics_feature("search_deputies") do |form| %>
+    <div class="deputy-search__field">
+      <%= form.label :q, "Buscar por nome ou partido" %>
+      <%= form.search_field :q, value: @query, placeholder: "Digite um nome ou a sigla do partido", maxlength: 200, class: "deputy-search__input" %>
+    </div>
+    <%= form.submit "Buscar", class: "expense-filter__submit", data: { turbo_submits_with: "Buscando…" } %>
+    <% if @query.present? %>
+      <%= link_to "Limpar busca", deputies_path(anchor: "parlamentares"), class: "expense-filter__clear", data: analytics_feature("clear_search") %>
+    <% end %>
+  <% end %>
+
+  <% if @query.present? %>
+    <p class="deputy-search__summary" role="status"><%= @deputies.length %> <%= @deputies.length == 1 ? "resultado" : "resultados" %> para “<%= @query %>”.</p>
+  <% end %>
 
   <% if @deputies.any? %>
     <div class="deputy-table-wrap">
@@ -43,12 +59,12 @@
                   <% else %>
                     <span class="deputy-photo deputy-photo--placeholder" aria-hidden="true"><%= deputy.name.to_s.first %></span>
                   <% end %>
-                  <%= link_to deputy.name, deputy_path(deputy), class: "deputy-name" %>
+                  <%= link_to deputy.name, deputy_path(deputy), class: "deputy-name", data: analytics_feature("select_deputy", deputy_analytics_properties(deputy)) %>
                 </div>
               </td>
               <td class="deputy-table__party" data-label="Partido"><span class="deputy-party"><%= deputy.political_party.presence || "Não informado" %></span></td>
               <td class="deputy-table__amount" data-label="Total registrado"><%= number_to_currency(deputy.total_expenses, unit: "R$ ", separator: ",", delimiter: ".") %></td>
-              <td class="deputy-table__action" data-label="Detalhes"><%= link_to "Ver despesas", deputy_path(deputy), class: "text-link", aria: { label: "Ver despesas de #{deputy.name}" } %></td>
+              <td class="deputy-table__action" data-label="Detalhes"><%= link_to "Ver despesas", deputy_path(deputy), class: "text-link", aria: { label: "Ver despesas de #{deputy.name}" }, data: analytics_feature("select_deputy", deputy_analytics_properties(deputy)) %></td>
             </tr>
           <% end %>
         </tbody>
@@ -56,8 +72,13 @@
     </div>
   <% else %>
     <div class="empty-state">
-      <h2>Nenhum registro encontrado</h2>
-      <p>Não há despesas parlamentares disponíveis para exibir no momento.</p>
+      <% if @query.present? %>
+        <h3>Nenhum deputado encontrado</h3>
+        <p>Tente outro nome ou sigla de partido, ou limpe a busca para ver todos os deputados.</p>
+      <% else %>
+        <h2>Nenhum registro encontrado</h2>
+        <p>Não há despesas parlamentares disponíveis para exibir no momento.</p>
+      <% end %>
     </div>
   <% end %>
 </section>

@@ -203,6 +203,14 @@ h1, h2, h3 { color: var(--ink); font-family: var(--display); font-weight: 600; l
 .home-list-heading { display: flex; gap: 24px; align-items: center; justify-content: space-between; padding-top: 28px; border-top: 1px solid var(--line-strong); scroll-margin-top: 24px; }
 .home-list-heading h2 { margin-bottom: 6px; font-size: 27px; }
 .home-list-heading > div > p { margin-bottom: 0; color: var(--ink-soft); font-size: 14px; }
+.deputy-search { display: flex; flex-wrap: wrap; align-items: end; gap: 12px; margin-top: 24px; }
+.deputy-search__field { display: grid; flex: 1 1 280px; max-width: 520px; min-width: 0; gap: 6px; }
+.deputy-search__field label { color: var(--ink-soft); font-size: 14px; font-weight: 700; }
+.deputy-search__input { width: 100%; min-height: 44px; min-width: 0; padding: 10px 12px; border: 1px solid var(--line-strong); border-radius: 2px; color: var(--ink); background: var(--paper-light); font: inherit; caret-color: var(--green); }
+.deputy-search__input::placeholder { color: var(--ink-soft); opacity: 1; }
+.deputy-search__input:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+.deputy-search .expense-filter__submit:disabled { opacity: 0.65; cursor: wait; }
+.deputy-search__summary { margin: 16px 0 0; color: var(--ink-soft); font-size: 14px; overflow-wrap: anywhere; }
 .deputies-page .deputy-table-wrap { margin-top: 24px; }
 .deputies-page .deputy-table th { padding-bottom: 14px; font-size: 11px; }
 .deputies-page .deputy-table td { padding-block: 18px; background: var(--paper-light); }
@@ -231,6 +239,7 @@ h1, h2, h3 { color: var(--ink); font-family: var(--display); font-weight: 600; l
   .home-list-heading { flex-wrap: wrap; gap: 12px; }
   .home-list-heading h2 { font-size: 24px; }
   .home-list-heading .page-intro__count { margin: 0; }
+  .deputy-search__field { flex-basis: 100%; max-width: none; }
   .deputies-page .deputy-table tbody tr { padding: 18px; background: var(--paper-light); grid-template-columns: minmax(0, 1fr) auto; }
   .deputies-page .deputy-table td { padding-block: 6px; background: none; }
   .deputies-page .deputy-table__person { display: block; }

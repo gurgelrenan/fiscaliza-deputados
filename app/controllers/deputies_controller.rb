@@ -1,6 +1,8 @@
 class DeputiesController < ApplicationController
   def index
+    @query = params[:q].is_a?(String) ? params[:q].strip.first(200) : ""
     @deputies = Deputy.with_total_expenses
+                      .search(@query)
                       .order(:name)
   end
 
