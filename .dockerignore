@@ -1,0 +1,17 @@
+.git
+.github
+.bundle
+.agents
+.codex
+.impeccable
+.env*
+.kamal
+config/master.key
+config/credentials/*.key
+log/*
+tmp/*
+storage/*
+spec
+coverage
+vendor
+node_modules

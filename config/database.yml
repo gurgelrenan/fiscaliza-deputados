@@ -82,5 +82,6 @@ test:
 production:
   <<: *default
   database: fiscaliza_deputados_production
+  host: <%= ENV.fetch("DATABASE_HOST", "localhost") %>
   username: fiscaliza_deputados
   password: <%= ENV["FISCALIZA_DEPUTADOS_DATABASE_PASSWORD"] %>

@@ -27,5 +27,6 @@ group :test do
 end
 
 group :development do
+  gem 'kamal', '~> 2.12'
   gem 'web-console'
 end

@@ -48,3 +48,16 @@ Para atualizar um banco existente, faça backup e rode `bin/rails db:migrate`. N
 ## Produção e configuração
 
 Configure `DATABASE_URL` ou `FISCALIZA_DEPUTADOS_DATABASE_PASSWORD` e `SECRET_KEY_BASE`. Se os segredos estiverem nas credenciais Rails existentes, forneça a chave por `RAILS_MASTER_KEY`; não versione `config/master.key`. A configuração de produção força HTTPS e pressupõe um proxy que termina TLS. Action Cable usa Redis via `REDIS_URL` (o padrão aponta para `localhost:6379`); configure um Redis acessível no ambiente de produção. Jobs e cache usam os adaptadores em memória padrão.
+
+### Deploy com Kamal
+
+O deploy em `config/deploy.yml` usa a VPS `REDACTED` e o domínio `deputados.gurgelrenan.tech`. A imagem é publicada em `ghcr.io/gurgelrenan/fiscaliza-deputados`, na arquitetura `amd64`. PostgreSQL e Redis rodam como acessórios na rede Docker do Kamal, sem portas públicas. Os dados do PostgreSQL ficam no diretório persistente configurado no servidor.
+
+Copie `.kamal/secrets.example` para `.kamal/secrets` e configure o token do GHCR e uma senha persistente para o banco. As credenciais criptografadas de produção estão em `config/credentials/production.yml.enc`; forneça a chave correspondente por `RAILS_MASTER_KEY` ou pelo arquivo local `config/credentials/production.key`. Nunca versione arquivos `.key` ou `.kamal/secrets`.
+
+```sh
+bin/kamal setup  # Primeiro deploy: prepara servidor, acessórios e aplicação.
+bin/kamal deploy  # Deploys seguintes.
+```
+
+O hook `pre-deploy` configura o kamal-proxy sem publicar portas. O Traefik existente na VPS encaminha o domínio para esse proxy e emite o certificado pelo resolver `letsencrypt`, na entrypoint `websecure`. A configuração pressupõe Traefik com descoberta Docker e conectividade com a rede do Kamal. O container executa `db:prepare` antes de iniciar o servidor Rails; a importação dos dados é feita separadamente.

@@ -1,0 +1,13 @@
+#!/bin/sh
+set -eu
+
+# Keep the VPS's existing Traefik on ports 80/443 and let it route to kamal-proxy.
+bundle exec kamal proxy boot_config set \
+  --publish false \
+  --docker-options \
+  "label=traefik.enable=true" \
+  'label=traefik.http.routers.fiscaliza-deputados.rule=Host(`deputados.gurgelrenan.tech`)' \
+  "label=traefik.http.routers.fiscaliza-deputados.entrypoints=websecure" \
+  "label=traefik.http.routers.fiscaliza-deputados.tls=true" \
+  "label=traefik.http.routers.fiscaliza-deputados.tls.certresolver=letsencrypt" \
+  "label=traefik.http.services.fiscaliza-deputados.loadbalancer.server.port=80"

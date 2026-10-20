@@ -1,0 +1,50 @@
+service: fiscaliza-deputados
+image: gurgelrenan/fiscaliza-deputados
+
+servers:
+  web:
+    hosts:
+      - REDACTED
+    options:
+      memory: 768m
+      cpus: 1.0
+
+registry:
+  server: ghcr.io
+  username: gurgelrenan
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+builder:
+  arch: amd64
+
+proxy:
+  host: deputados.gurgelrenan.tech
+  app_port: 3000
+  ssl: false
+  forward_headers: true
+
+env:
+  clear:
+    DATABASE_HOST: fiscaliza-deputados-db
+    REDIS_URL: redis://fiscaliza-deputados-redis:6379/1
+  secret:
+    - RAILS_MASTER_KEY
+    - FISCALIZA_DEPUTADOS_DATABASE_PASSWORD
+
+accessories:
+  db:
+    image: postgres:17-alpine
+    host: REDACTED
+    env:
+      clear:
+        POSTGRES_DB: fiscaliza_deputados_production
+        POSTGRES_USER: fiscaliza_deputados
+      secret:
+        - POSTGRES_PASSWORD:FISCALIZA_DEPUTADOS_DATABASE_PASSWORD
+    directories:
+      - fiscaliza-deputados-postgres:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    host: REDACTED

@@ -29,3 +29,9 @@
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
+
+# Kamal secrets stay on the deployment machine.
+/.kamal/secrets
+
+# Ignore key files for decrypting credentials and more.
+/config/credentials/*.key
