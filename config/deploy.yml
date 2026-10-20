@@ -4,7 +4,7 @@ image: gurgelrenan/fiscaliza-deputados
 servers:
   web:
     hosts:
-      - REDACTED
+      - <%= ENV.fetch("KAMAL_HOST") %>
     options:
       memory: 768m
       cpus: 1.0
@@ -35,7 +35,7 @@ env:
 accessories:
   db:
     image: postgres:17-alpine
-    host: REDACTED
+    host: <%= ENV.fetch("KAMAL_HOST") %>
     env:
       clear:
         POSTGRES_DB: fiscaliza_deputados_production
@@ -47,4 +47,4 @@ accessories:
 
   redis:
     image: redis:7-alpine
-    host: REDACTED
+    host: <%= ENV.fetch("KAMAL_HOST") %>

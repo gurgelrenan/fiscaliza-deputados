@@ -51,7 +51,7 @@ Configure `DATABASE_URL` ou `FISCALIZA_DEPUTADOS_DATABASE_PASSWORD` e `SECRET_KE
 
 ### Deploy com Kamal
 
-O deploy em `config/deploy.yml` usa a VPS `REDACTED` e o domínio `deputados.gurgelrenan.tech`. A imagem é publicada em `ghcr.io/gurgelrenan/fiscaliza-deputados`, na arquitetura `amd64`. PostgreSQL e Redis rodam como acessórios na rede Docker do Kamal, sem portas públicas. Os dados do PostgreSQL ficam no diretório persistente configurado no servidor.
+O deploy em `config/deploy.yml` usa o host definido localmente em `KAMAL_HOST` e o domínio `deputados.gurgelrenan.tech`. Defina `KAMAL_HOST` com o endereço da VPS antes de executar comandos do Kamal. A imagem é publicada em `ghcr.io/gurgelrenan/fiscaliza-deputados`, na arquitetura `amd64`. PostgreSQL e Redis rodam como acessórios na rede Docker do Kamal, sem portas públicas. Os dados do PostgreSQL ficam no diretório persistente configurado no servidor.
 
 Copie `.kamal/secrets.example` para `.kamal/secrets` e configure o token do GHCR e uma senha persistente para o banco. As credenciais criptografadas de produção estão em `config/credentials/production.yml.enc`; forneça a chave correspondente por `RAILS_MASTER_KEY` ou pelo arquivo local `config/credentials/production.key`. Nunca versione arquivos `.key` ou `.kamal/secrets`.
 
