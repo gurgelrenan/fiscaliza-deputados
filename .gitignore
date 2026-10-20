@@ -35,3 +35,9 @@
 
 # Ignore key files for decrypting credentials and more.
 /config/credentials/*.key
+
+# Local Impeccable installation, hooks, and design-session artifacts.
+/.agents/skills/impeccable/
+/.codex/hooks.json
+/.impeccable/questions/
+/.impeccable/mocks/

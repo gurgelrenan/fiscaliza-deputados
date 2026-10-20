@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "source": "app/assets/stylesheets/application.css",
+  "world": "Cordel de prestação de contas",
+  "mode": "operate",
+  "tokens": {
+    "paper": "#f2ead8",
+    "paper-light": "#f8f3e8",
+    "ink": "#25251f",
+    "ink-soft": "#5d5b51",
+    "green": "#193d35",
+    "green-hover": "#245448",
+    "red": "#b5422d",
+    "gold": "#f2d66c",
+    "display-font": "Roboto Slab",
+    "body-font": "DM Sans",
+    "content-width": "1160px",
+    "mobile-breakpoint": "760px"
+  },
+  "rules": [
+    "Use paper cream as the page surface and deep green for the masthead and links.",
+    "Use red sparingly for the masthead stripe and short expense underlines.",
+    "Keep tabular data flat, separated by fine rules, and numerically aligned.",
+    "At narrow widths, stack list rows and label expense cells for scanning."
+  ]
+}
